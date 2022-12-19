@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Card, Input, Upload, Row, Col } from "antd";
-import { fetchCountryData } from "../../redux/actions/countryData/CountryData";
 import html2canvas from "html2canvas";
 const Home = () => {
   const exportRef = useRef();
@@ -42,23 +41,23 @@ const Home = () => {
   useEffect(
     () => {
       console.log("11img------", profileImg);
-      dispatch(fetchCountryData());
     },
     [profileImg],
     [addvalue],
     [array],
-    [value]
+    [value],
+    [img]
   );
   console.log("valuesadd30", addvalue);
   const exportAsImage = async (element) => {
     const canvas = await html2canvas(element);
     const image = canvas.toDataURL("image/png", 1.0);
-    // setImg([...img, image]);
-    // if (img.length === 4) {
-    //   setNewImg([...newImg, img[img.length - 1]]);
-    //   setImg([]);
-    // }
-    setImg(image);
+    setImg([...img, image]);
+    if (img.length === 4) {
+      setNewImg([...newImg, img[img.length - 1]]);
+      setImg([]);
+    }
+    // setImg(image);
   };
 
   return (
@@ -115,15 +114,15 @@ const Home = () => {
             <Card style={{ height: "360px", width: "250px" }}>
               <h4> ss taken </h4>
               {console.log("imgss96", img)}
-              <img src={img} />
-              {/* {newImg.length > 0 ? (
+              {/* <img src={img} /> */}
+              {newImg.length > 0 ? (
                 newImg.map((item) => <img src={item} alt="asdfg" />)
               ) : (
                 <img src={img[img.length - 1]} alt="asdfg" />
-              )} */}
+              )}
             </Card>
           </Col>
-          <Col style={{ marginLeft: "20px" }} ref={exportRef}>
+          <Col style={{ marginLeft: "20px" }}>
             {array?.map((d) => {
               return (
                 <Card
@@ -141,6 +140,7 @@ const Home = () => {
               );
             })}
             <Card
+              ref={exportRef}
               style={{
                 width: "200px",
                 height: "200px",
