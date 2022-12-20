@@ -54,12 +54,14 @@ const Home = () => {
     const canvas = await html2canvas(element);
     const image = canvas.toDataURL("image/png", 1.0);
     setImg([...img, image]);
-
-    if (img.length > 3) {
+    
+    if (img.length === 4) {
       setNewImg([...newImg, img[img.length - 1]]);
+      // setNewImg([...newImg, newImg1]);
       setImg([]);
     }
-    // setImg(image)
+    // setImg(image);
+
     setNewImg1(img[img?.length - 1]);
   };
 
@@ -105,6 +107,14 @@ const Home = () => {
               </Button>
             </Card>
             <br />
+            {/* <Card>
+              <h5>img selected</h5>
+              <img
+                style={{ width: "150px", height: "150px" }}
+                src={profileImg?.thumbUrl}
+                alt="profileimg"
+              />
+            </Card> */}
 
             <Card style={{ height: "360px", width: "250px" }}>
               <h4> ss taken </h4>
@@ -115,6 +125,11 @@ const Home = () => {
               ) : (
                 <img src={img[img.length - 1]} alt="asdfg" />
               )}
+
+              <h4>ss</h4>
+              {newImg.map((item) => (
+                <img src={item} />
+              ))}
             </Card>
           </Col>
           <Col style={{ marginLeft: "20px" }}>
