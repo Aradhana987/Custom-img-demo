@@ -1,0 +1,8 @@
+/* .ant-upload{
+    width: 100%;
+  } */
+  .card-cls{
+    background-size: "cover"!important;
+    background-repeat: "no-repeat"!important;
+    border: "none"!important;
+  }

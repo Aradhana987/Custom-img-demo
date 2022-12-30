@@ -4,15 +4,32 @@ import { Button, Card, Input, Upload, Row, Col } from "antd";
 import html2canvas from "html2canvas";
 const Home = () => {
   const exportRef = useRef();
-  const handelAdd = () => {
+  const handelAdd = async (element) => {
+    const canvas = await html2canvas(element);
+    const image = canvas.toDataURL("image/png", 1.0);
     if (addvalue.length > 2) {
       setArray([...array, addvalue]);
       setAddValue([value]);
       setValue(" ");
+      // img[img.length - 1] = image;
+      setImg[img.length - 1] = image;
+      setImg([...img, image]);
     } else {
       setAddValue([...addvalue, value]);
       setValue("");
+      if (img.length > 0) {
+        // img[img.length - 1] = image;
+        setImg[img.length - 1] = image;
+      } else {
+        setImg([...img, image]);
+      }
     }
+  };
+  const handelExport = async (element) => {
+    const canvas = await html2canvas(element);
+    const image = canvas.toDataURL("image/png", 1.0);
+    img[img.length - 1] = image;
+    setImg([...img]);
   };
   const [profileImg, setProfileImg] = useState([]);
   const [array, setArray] = useState([]);
@@ -55,13 +72,10 @@ const Home = () => {
     const image = canvas.toDataURL("image/png", 1.0);
     setImg([...img, image]);
 
-    if (img.length === 4) {
+    if (img.length > 3) {
       setNewImg([...newImg, img[img.length - 1]]);
-      // setNewImg([...newImg, newImg1]);
       setImg([]);
     }
-    // setImg(image);
-
     setNewImg1(img[img?.length - 1]);
   };
 
@@ -76,10 +90,9 @@ const Home = () => {
         }}
       >
         <Row>
-          <Col style={{ width: "260px" }}>
-            <Card style={{ height: "360px", width: "250px" }}>
+          <Col style={{ width: "300px" }}>
+            <Card style={{ height: "420px", width: "300px" }}>
               <Upload.Dragger
-                // action={"http://localhost:3000/"}
                 listType="picture"
                 showUploadList={{ showRemoveIcon: true }}
                 onChange={handleChange}
@@ -97,40 +110,34 @@ const Home = () => {
                 onChange={valueChange}
               />
               <br />
+              <br />
               <Button
                 onClick={() => {
-                  handelAdd();
-                  exportAsImage(exportRef.current);
+                  handelAdd(exportRef.current);
                 }}
               >
                 Add more items
               </Button>
+              <br />
+              <br />
+              <Button
+                onClick={() => {
+                  handelExport(exportRef.current);
+                }}
+              >
+                Export
+              </Button>
             </Card>
             <br />
-             <Card>
-              <h5>img selected</h5>
-              <img
-                style={{ width: "400px", height: "400px" }}
-                src={profileImg?.thumbUrl}
-                alt="profileimg"
-              />
-            </Card> 
 
-            <Card style={{ height: "360px", width: "250px" }}>
-           
+            <Card style={{ height: "450px", width: "300px" }}>
               <h4> ss taken </h4>
               {console.log("imgss96", img)}
-              {/* <img src={img} /> */}
-              {newImg.length > 0 ? (
-                newImg.map((item) => <img src={item} alt="asdfg" />)
+              {img.length > 0 ? (
+                img.map((item) => <img src={item} alt="asdfg" />)
               ) : (
-                <img src={img[img.length - 1]} alt="asdfg" />
+                <img alt="no image" />
               )}
-
-              <h4>ss</h4>
-              {newImg.map((item) => (
-                <img src={item} />
-              ))}
             </Card>
           </Col>
           <Col style={{ marginLeft: "20px" }}>
@@ -140,7 +147,6 @@ const Home = () => {
                   style={{
                     width: "200px",
                     height: "200px",
-                    //   marginLeft: "50px",
                     background: `url(${profileImg?.thumbUrl})`,
                   }}
                 >
@@ -155,7 +161,7 @@ const Home = () => {
               style={{
                 width: "200px",
                 height: "200px",
-                marginLeft: "50px",
+                // marginLeft: "50px",
                 background: `url(${profileImg?.thumbUrl})`,
               }}
             >

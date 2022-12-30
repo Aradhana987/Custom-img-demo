@@ -1,29 +1,74 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useDispatch } from "react-redux";
-import { Button, Card, Input, Upload, Row, Col } from "antd";
+import { Button, Card, Input, Upload, Row, Col, Select, Form } from "antd";
 import html2canvas from "html2canvas";
+import "../../assets/styles/style.css";
+// import Home2 from "./Home2";
+import { SketchPicker } from "react-color";
 const Home = () => {
+  // const colors = ["#000000", "#B8860B", "#DC143C", "#FFFAF0"];
+  const [sketchPickerColor, setSketchPickerColor] = useState({
+    r: "241",
+    g: "112",
+    b: "19",
+    a: "1",
+  });
+
+  const { r, g, b, a } = sketchPickerColor;
+
+  const [newColor, setNewColor] = useState("");
   const exportRef = useRef();
-  const handelAdd = () => {
+  const handelAdd = async (element) => {
+    const canvas = await html2canvas(element);
+    const image = canvas.toDataURL("image/png", 1.0);
     if (addvalue.length > 2) {
       setArray([...array, addvalue]);
       setAddValue([value]);
       setValue(" ");
+      img[img.length - 1] = image;
+      setImg([...img, image]);
     } else {
       setAddValue([...addvalue, value]);
       setValue("");
+      if (img.length > 0) {
+        img[img.length - 1] = image;
+      } else {
+        setImg([...img, image]);
+      }
     }
   };
+  const handelExport = async (element) => {
+    const canvas = await html2canvas(element);
+    const image = canvas.toDataURL("image/png", 1.0);
+    img[img.length - 1] = image;
+    setImg([...img]);
+  };
+
+  const handelDownload = async (element, imageFileName) => {
+    const canvas = await html2canvas(element);
+    const image = canvas.toDataURL("image/png", 1.0);
+    downloadImage(image, imageFileName);
+  };
+  const downloadImage = (blob, fileName) => {
+    const fakeLink = window.document.createElement("a");
+    fakeLink.style = "display:none;";
+    fakeLink.download = fileName;
+  
+    fakeLink.href = blob;
+  
+    document.body.appendChild(fakeLink);
+    fakeLink.click();
+    document.body.removeChild(fakeLink);
+  
+    fakeLink.remove();
+  };
+  
   const [profileImg, setProfileImg] = useState([]);
   const [array, setArray] = useState([]);
-  const [index, setIndex] = useState(0);
   const [value, setValue] = useState("");
   const [addvalue, setAddValue] = useState([]);
   const [img, setImg] = useState([]);
-  const [newImg, setNewImg] = useState([]);
-  const [newImg1, setNewImg1] = useState([]);
+  const [selectValue, setSelectValue] = useState("");
   console.log("items13", addvalue);
-  console.log("index16", index);
   const handleChange = (event) => {
     console.log(
       "🚀 ~ file: Home.jsx:8 ~ handleChange ~ event",
@@ -38,7 +83,6 @@ const Home = () => {
   console.log("value", value);
   console.log("11img", profileImg);
   console.log("array34", array);
-  const dispatch = useDispatch();
   useEffect(
     () => {
       console.log("11img------", profileImg);
@@ -50,19 +94,6 @@ const Home = () => {
     [img]
   );
   console.log("valuesadd30", addvalue);
-  const exportAsImage = async (element) => {
-    const canvas = await html2canvas(element);
-    const image = canvas.toDataURL("image/png", 1.0);
-    setImg([...img, image]);
-
-    if (img.length > 3) {
-      setNewImg([...newImg, img[img.length - 1]]);
-      setImg([]);
-    }
-    // setImg(image)
-    setNewImg1(img[img?.length - 1]);
-  };
-
   return (
     <div>
       <Card
@@ -74,46 +105,89 @@ const Home = () => {
         }}
       >
         <Row>
-          <Col style={{ width: "260px" }}>
-            <Card style={{ height: "360px", width: "250px" }}>
+          <Col style={{ width: "300px" }}>
+            <Card style={{ height: "900px", width: "300px" }}>
               <Upload.Dragger
-                // action={"http://localhost:3000/"}
                 listType="picture"
                 showUploadList={{ showRemoveIcon: true }}
                 onChange={handleChange}
+                maxCount={1}
               >
                 drag your file here or
                 <br />
                 <Button>Select image</Button>
               </Upload.Dragger>
               <br />
-              <h4>Input menu items</h4>
+
+              {/* <Select
+                onChange={(value) => {
+                  setSelectValue(value);
+                }}
+                name="category"
+                placeholder="Select menu items color"
+                style={{ width: "200px" }}
+              >
+                <Select.Option value="#000000">Black</Select.Option>
+                <Select.Option value="#B8860B">Golden</Select.Option>
+                <Select.Option value="#A52A2A">Brown</Select.Option>
+                <Select.Option value="#FFFAF0">White</Select.Option>
+              </Select> */}
+              {console.log("setSelectValue103", newColor)}
+              <br />
+              <br />
+              <h5>Sketch Picker</h5>
+
+              <SketchPicker
+                onChange={(color) => {
+                  setSketchPickerColor(color.rgb);
+                  setNewColor(color.hex);
+                }}
+                color={sketchPickerColor}
+              />
+              {/* <h4>Input menu items</h4> */}
+              <br />
+              <br />
               <Input
                 placeholder="Menu Items"
-                style={{ width: "150px" }}
+                style={{ width: "200px" }}
                 value={value}
                 onChange={valueChange}
               />
               <br />
+              <br />
               <Button
                 onClick={() => {
-                  handelAdd();
-                  exportAsImage(exportRef.current);
+                  handelAdd(exportRef.current);
                 }}
               >
                 Add more items
               </Button>
+              <br />
+              <br />
+              <Button
+                onClick={() => {
+                  handelExport(exportRef.current);
+                }}
+              >
+                Export
+              </Button>
+              <Button
+                onClick={() => {
+                  handelDownload(exportRef.current,"test");
+                }}
+              >
+                Download
+              </Button>
             </Card>
             <br />
 
-            <Card style={{ height: "360px", width: "250px" }}>
+            <Card style={{ height: "450px", width: "300px" }}>
               <h4> ss taken </h4>
               {console.log("imgss96", img)}
-              {/* <img src={img} /> */}
-              {newImg.length > 0 ? (
-                newImg.map((item) => <img src={item} alt="asdfg" />)
+              {img.length > 0 ? (
+                img.map((item) => <img src={item} alt="asdfg" />)
               ) : (
-                <img src={img[img.length - 1]} alt="asdfg" />
+                <img alt="no img" />
               )}
             </Card>
           </Col>
@@ -124,12 +198,15 @@ const Home = () => {
                   style={{
                     width: "200px",
                     height: "200px",
-                    //   marginLeft: "50px",
                     background: `url(${profileImg?.thumbUrl})`,
+                    backgroundSize: "cover",
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
+                    border: "none",
                   }}
                 >
                   {d?.map((item) => (
-                    <h3>{item}</h3>
+                    <h3 style={{ color: `${newColor}` }}>{item}</h3>
                   ))}
                 </Card>
               );
@@ -139,12 +216,16 @@ const Home = () => {
               style={{
                 width: "200px",
                 height: "200px",
-                marginLeft: "50px",
                 background: `url(${profileImg?.thumbUrl})`,
+                // objectFit: "cover",
+                backgroundSize: "cover",
+                // backgroundRepeat: "no-repeat",
+                border: "none",
+                // contentFit: "cover",
               }}
             >
               {addvalue?.map((item) => (
-                <h3>{item}</h3>
+                <h3 style={{ color: `${newColor}` }}>{item}</h3>
               ))}
             </Card>
           </Col>
